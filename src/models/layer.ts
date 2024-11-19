@@ -5,6 +5,8 @@ import { v4 as uuid } from "uuid";
 
 export const LayerTypeModel = z.enum(["IMAGE_SEQUENCE", "ADJUSTMENT"]);
 
+export type LayerType = z.infer<typeof LayerTypeModel>;
+
 export const BaseLayerModel = z.object({
   id: z
     .string()

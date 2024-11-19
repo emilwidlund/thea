@@ -16,18 +16,18 @@ export const Switch = ({
   className,
 }: SwitchProps) => {
   const containerClassNames = clsx(
-    "relative w-6 rounded-full p-1 transition-colors cursor-pointer",
+    "relative w-8 rounded-full p-1.5 transition-colors cursor-pointer",
     {
-      "bg-neutral-800": !active,
+      "bg-neutral-700": !active,
       "bg-accent": active,
       "opacity-30": disabled,
     },
     className,
   );
 
-  const dotClassNames = clsx("rounded-full w-1 h-1", {
+  const dotClassNames = clsx("rounded-full w-1.5 h-1.5", {
     "bg-white": active,
-    "bg-neutral-300": !active,
+    "bg-neutral-600": !active,
   });
 
   const handleClick: MouseEventHandler<HTMLDivElement> = useCallback(
@@ -46,7 +46,7 @@ export const Switch = ({
       <motion.div
         className={dotClassNames}
         initial={false}
-        animate={{ x: active ? 12 : 0 }}
+        animate={{ x: active ? 14 : 0 }}
       />
     </div>
   );

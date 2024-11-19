@@ -1,94 +1,48 @@
-import { StrictModeDroppable } from "@/components/StrictModeDroppable/StrictModeDroppable";
 import { Layer } from "@/models/layer";
-import {
-  DragDropContext,
-  OnDragEndResponder,
-  OnDragStartResponder,
-} from "react-beautiful-dnd";
+import { DndContext } from "@dnd-kit/core";
+
 import { LayerItem } from "./LayerItem";
-import { useCallback, useState } from "react";
-import { useRouter } from "next/router";
+import { useCallback } from "react";
+import { Well } from "../Well/Well";
+import { useQueryState } from "nuqs";
+import { FilePicker } from "../FilePicker/FilePicker";
 
 export interface LayerPanelProps {
   layers: Layer[];
+  onFilesChange: (files: File[]) => void;
 }
 
-export const LayerPanel = ({ layers }: LayerPanelProps) => {
-  const [activeLayer, setActiveLayer] = useState<Layer | null>(null);
-
-  const router = useRouter();
+export const LayerPanel = ({ layers, onFilesChange }: LayerPanelProps) => {
+  const [activeLayerId, setActiveLayerId] = useQueryState("activeLayerId");
 
   const createSelectLayerHandler = useCallback(
-    (layer: Layer) => {
-      return () => {
-        router.replace({
-          query: {
-            ...router.query,
-            activeLayerId: layer.id,
-          },
-        });
-      };
+    (layer: Layer) => () => {
+      setActiveLayerId(layer.id);
     },
-    [router],
-  );
-
-  const handleDragStart: OnDragStartResponder = useCallback(
-    (result) => {
-      router.replace({
-        query: {
-          ...router.query,
-          activeLayerId: result.draggableId,
-        },
-      });
-    },
-    [router],
-  );
-
-  const handleDragEnd: OnDragEndResponder = useCallback(
-    (result) => {
-      // dropped outside the list
-      if (!result.destination) {
-        return;
-      }
-
-      // reorder using index of source and destination.
-      const itemsCopy = layers.slice();
-      const [removed] = itemsCopy.splice(result.source.index, 1);
-      // put the removed one into destination.
-      itemsCopy.splice(result.destination.index, 0, removed);
-
-      const order = itemsCopy
-        .slice()
-        .reverse()
-        .map((layer) => layer.id);
-    },
-    [layers],
+    [setActiveLayerId],
   );
 
   return (
-    <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <StrictModeDroppable droppableId="layers">
-        {(provided) => (
-          <div
-            ref={provided.innerRef}
-            className="flex flex-col grow w-96"
-            {...provided.droppableProps}
-          >
-            {layers.map((layer, index) => (
-              <LayerItem
-                key={layer.id}
-                index={index}
-                layer={layer}
-                onToggle={(toggled) => {
-                  // Handle
-                }}
-                onClick={createSelectLayerHandler(layer)}
-                active={activeLayer?.id === layer.id}
-              />
-            ))}
-          </div>
-        )}
-      </StrictModeDroppable>
-    </DragDropContext>
+    <div className="flex flex-col gap-y-6 w-96">
+      <h3>Hierarchy</h3>
+      <div className="flex items-center flex-row">
+        <FilePicker onFilesChange={onFilesChange} />
+      </div>
+      <DndContext>
+        <Well className="flex gap-y-2 flex-col">
+          {layers.map((layer) => (
+            <LayerItem
+              key={layer.id}
+              layer={layer}
+              selected={layer.id === activeLayerId}
+              onToggle={(toggled) => {
+                // Handle
+              }}
+              onClick={createSelectLayerHandler(layer)}
+            />
+          ))}
+        </Well>
+      </DndContext>
+    </div>
   );
 };
