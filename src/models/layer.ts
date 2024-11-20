@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { v4 as uuid } from "uuid";
+import { Texture } from "three";
 
 // Base Model for Layers
 
@@ -22,12 +23,16 @@ export const BaseLayerModel = z.object({
 
 export const ImageSequenceLayerModel = BaseLayerModel.extend({
   type: LayerTypeModel.default("IMAGE_SEQUENCE"),
-  src: z.string(),
+  textures: z.array(z.instanceof(Texture)),
 });
+
+export type ImageSequenceLayer = z.infer<typeof ImageSequenceLayerModel>;
 
 export const AdjustmentLayerModel = BaseLayerModel.extend({
   type: LayerTypeModel.default("ADJUSTMENT"),
 });
+
+export type AdjustmentLayer = z.infer<typeof AdjustmentLayerModel>;
 
 export const LayerModel = z.union([
   ImageSequenceLayerModel,

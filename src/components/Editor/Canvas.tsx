@@ -4,109 +4,84 @@ import { Suspense, useRef } from "react";
 import {
   Canvas as THREECanvas,
   CanvasProps as THREECanvasProps,
-  useFrame,
-  useThree,
 } from "@react-three/fiber";
-import { type Texture, type Mesh, type MeshBasicMaterial, TextureLoader } from "three";
+import { type Mesh, TextureLoader } from "three";
 import { OrthographicCamera, Text } from "@react-three/drei";
 import { EffectComposer, Noise } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
+import { Scene } from "./Scene";
+import { Composition } from "@/models/composition";
+import { ImageSequenceLayer } from "@/models/layer";
+import { Flex, Box } from "@react-three/flex";
 
 type CanvasProps = Omit<THREECanvasProps, "children"> & {
-  textures: Texture[];
+  composition: Composition;
 };
 
-export const Canvas = ({ textures, ...props }: CanvasProps) => {
+export const Canvas = ({ composition, ...props }: CanvasProps) => {
   const ref = useRef<HTMLCanvasElement | null>(null);
   const polarMeshRef = useRef<Mesh>(null);
 
-  const polarTexture = new TextureLoader().load('/polar.png');
+  const polarTexture = new TextureLoader().load("/polar.png");
 
-
+  const sequenceLayer = composition.layers.find(
+    (layer) => layer.type === "IMAGE_SEQUENCE"
+  ) as ImageSequenceLayer | undefined;
 
   return (
     <THREECanvas ref={ref} {...props} linear flat>
-      <OrthographicCamera makeDefault zoom={100} position={[0, 0, 10]} />
-      <mesh ref={polarMeshRef} position={[0, 2.5, 1]} scale={.5}>
-        <planeGeometry args={[1, 1]} />
-        <meshBasicMaterial map={polarTexture} transparent />
-      </mesh>
-      <Suspense fallback={null}>
-        <Text
-          position={[0, 0, 1]}
-          color="white"
-          anchorX="center"
-          anchorY="middle"
-          font="/fonts/Louize-Italic-205TF.otf"
-          textAlign="center"
-          maxWidth={1}
-        >
-          Introducing Discounts
-        </Text>
-        <Text
-          position={[0, -2.5, 1]}
-          color="white"
-          anchorX="center"
-          anchorY="middle"
-          font="/fonts/Louize-Italic-205TF.otf"
-          textAlign="center"
-          fontSize={0.3}
-          maxWidth={1}
-        >
-          polar.sh
-        </Text>
-      </Suspense>
-      {textures.length > 0 && <Scene textures={textures} />}
-      
+      <OrthographicCamera makeDefault zoom={100} position={[0, 0, 2]} />
+      <group position={[0, 0, 1]}>
+        <Suspense fallback={null}>
+          <Flex
+            flexDirection="column"
+            alignItems="center"
+            size={[0, 10, 0]}
+            position={[0, 5, 0]}
+            padding={1}
+          >
+            <Box centerAnchor>
+              <mesh ref={polarMeshRef} scale={0.7}>
+                <planeGeometry args={[1, 1]} />
+                <meshBasicMaterial map={polarTexture} transparent />
+              </mesh>
+            </Box>
+            <Box centerAnchor width="auto" height="auto" flexGrow={1}>
+              <Text
+                color="white"
+                anchorX="center"
+                anchorY="middle"
+                font="/fonts/Louize-Italic-205TF.otf"
+                textAlign="center"
+                maxWidth={1}
+              >
+                Introducing Discounts
+              </Text>
+            </Box>
+            <Box centerAnchor>
+              <Text
+                color="white"
+                anchorX="center"
+                anchorY="middle"
+                font="/fonts/Louize-Italic-205TF.otf"
+                textAlign="center"
+                fontSize={0.5}
+                maxWidth={1}
+              >
+                polar.sh
+              </Text>
+            </Box>
+          </Flex>
+        </Suspense>
+      </group>
+
+      {sequenceLayer && sequenceLayer.textures.length > 0 && (
+        <Scene composition={composition} textures={sequenceLayer.textures} />
+      )}
+
       <EffectComposer>
         <Noise premultiply blendFunction={BlendFunction.ADD} />
       </EffectComposer>
     </THREECanvas>
-  );
-};
-
-export interface SceneProps {
-  textures: Texture[];
-}
-
-const Scene = ({ textures }: SceneProps) => {
-  const meshRef = useRef<Mesh>(null);
-  const materialRef = useRef<MeshBasicMaterial>(null);
-
-  const { size, viewport } = useThree();
-  const textureSwapInterval = 250; // 4 times per second
-  let elapsedTime = 0;
-  let textureIndex = 0;
-
-  useFrame((state, delta) => {
-    if (!materialRef.current || !meshRef.current) return;
-
-    elapsedTime += delta * 1000; // convert delta to milliseconds
-
-    if (elapsedTime >= textureSwapInterval) {
-      const currentTexture = textures[textureIndex % textures.length];
-      materialRef.current.map = currentTexture;
-      materialRef.current.needsUpdate = true;
-      textureIndex++;
-      elapsedTime = 0; // reset elapsed time
-
-      // Adjust the mesh scale to maintain the texture's aspect ratio
-      const textureAspect = currentTexture.image.width / currentTexture.image.height;
-      const canvasAspect = size.width / size.height;
-      if (canvasAspect > textureAspect) {
-        meshRef.current.scale.set(viewport.height * textureAspect, viewport.height, 1);
-      } else {
-        meshRef.current.scale.set(viewport.width, viewport.width / textureAspect, 1);
-      }
-    }
-  });
-
-  return (
-    <>
-      <mesh ref={meshRef}>
-        <planeGeometry args={[1, 1]} />
-        <meshBasicMaterial ref={materialRef} color={0xffffff} opacity={0.5} transparent />
-      </mesh>
-    </>
   );
 };
