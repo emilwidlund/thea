@@ -1,3 +1,5 @@
+"use client";
+
 import { Layer } from "@/models/layer";
 import { DndContext } from "@dnd-kit/core";
 
@@ -36,12 +38,12 @@ export const LayerPanel = ({ layers, onFilesChange }: LayerPanelProps) => {
               layer={layer}
               selected={layer.id === activeLayerId}
               onToggle={(toggled) => {
-                // Handle
-              }}
-              onClick={createSelectLayerHandler(layer)}
-            />
-          ))}
-        </Well>
+                    // Handle
+                  }}
+            onClick={createSelectLayerHandler(layer)}
+          />
+        ))}
+      </Well>
       </DndContext>
     </div>
   );

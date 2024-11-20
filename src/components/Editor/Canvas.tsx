@@ -1,3 +1,5 @@
+"use client";
+
 import { useRef } from "react";
 import {
   Canvas as THREECanvas,
@@ -5,8 +7,10 @@ import {
   useFrame,
   useThree,
 } from "@react-three/fiber";
-import { Texture, Mesh, MeshBasicMaterial, Color } from "three";
+import type { Texture, Mesh, MeshBasicMaterial } from "three";
 import { OrthographicCamera } from "@react-three/drei";
+import { EffectComposer, Noise } from "@react-three/postprocessing";
+
 
 type CanvasProps = Omit<THREECanvasProps, "children"> & {
   textures: Texture[];
@@ -17,7 +21,11 @@ export const Canvas = ({ textures, ...props }: CanvasProps) => {
 
   return (
     <THREECanvas ref={ref} {...props} linear flat>
-      <Scene textures={textures} />
+      <OrthographicCamera makeDefault zoom={100} position={[0, 0, 10]} />
+      {textures.length > 0 && <Scene textures={textures} />}
+      <EffectComposer>
+        <Noise />
+      </EffectComposer>
     </THREECanvas>
   );
 };
@@ -29,6 +37,7 @@ export interface SceneProps {
 const Scene = ({ textures }: SceneProps) => {
   const meshRef = useRef<Mesh>(null);
   const materialRef = useRef<MeshBasicMaterial>(null);
+
   const { size, viewport } = useThree();
   const textureSwapInterval = 250; // 4 times per second
   let elapsedTime = 0;
@@ -59,10 +68,9 @@ const Scene = ({ textures }: SceneProps) => {
 
   return (
     <>
-      <OrthographicCamera makeDefault zoom={100} position={[0, 0, 10]} />
       <mesh ref={meshRef}>
         <planeGeometry args={[1, 1]} />
-        <meshBasicMaterial ref={materialRef} color={new Color(0xffffff)} />
+        <meshBasicMaterial ref={materialRef} color={0xffffff} />
       </mesh>
     </>
   );

@@ -1,7 +1,9 @@
+"use client";
+
 import { Switch } from "@/components/Switch/Switch";
 import { Layer, LayerType } from "@/models/layer";
 import { twMerge } from "@/utils/twMerge";
-import { MouseEventHandler, useRef } from "react";
+import { MouseEventHandler } from "react";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 

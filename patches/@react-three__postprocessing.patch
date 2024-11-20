@@ -1,0 +1,56 @@
+diff --git a/dist/EffectComposer.cjs b/dist/EffectComposer.cjs
+index ab08b75310df3c45e81b802af0fe699d51851173..0d20115537cff9a9993f8e3ee9bfbc3c66022392 100644
+--- a/dist/EffectComposer.cjs
++++ b/dist/EffectComposer.cjs
+@@ -79,9 +79,9 @@ const EffectComposer = React.memo(
+       React.useLayoutEffect(() => {
+         const passes = [];
+         if (group.current && instance.current && composer) {
+-          const children2 = instance.current.objects;
++          const children2 = instance.current.children;
+           for (let i = 0; i < children2.length; i++) {
+-            const child = children2[i];
++            const child = children2[i].object;
+             if (child instanceof postprocessing.Effect) {
+               const effects = [child];
+               if (!isConvolution(child)) {
+diff --git a/dist/EffectComposer.js b/dist/EffectComposer.js
+index 335539d470b862efff4d34818a28d1ed78255005..c4e47fad5ea95dd28ef1570919bbcba0b1883ad8 100644
+--- a/dist/EffectComposer.js
++++ b/dist/EffectComposer.js
+@@ -77,9 +77,9 @@ const EffectComposer = React.memo(
+       useLayoutEffect(() => {
+         const passes = [];
+         if (group.current && instance.current && composer) {
+-          const children2 = instance.current.objects;
++          const children2 = instance.current.children;
+           for (let i = 0; i < children2.length; i++) {
+-            const child = children2[i];
++            const child = children2[i].object;
+             if (child instanceof Effect) {
+               const effects = [child];
+               if (!isConvolution(child)) {
+diff --git a/dist/effects/Noise.cjs b/dist/effects/Noise.cjs
+index 7d63733820267745829acf1dfa08680d2b9bac0a..ee4a79d22df4c229d6ba29aaede65cbc13932956 100644
+--- a/dist/effects/Noise.cjs
++++ b/dist/effects/Noise.cjs
+@@ -2,6 +2,6 @@
+ Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
+ const postprocessing = require("postprocessing");
+ const util = require("../util.cjs");
+-const Noise = util.wrapEffect(postprocessing.NoiseEffect, { blendFunction: postprocessing.BlendFunction.COLOR_DODGE });
++const Noise = util.wrapEffect(postprocessing.NoiseEffect, { blendFunction: postprocessing.BlendFunction.COLOR_DODGE, args: [] });
+ exports.Noise = Noise;
+ //# sourceMappingURL=Noise.cjs.map
+diff --git a/dist/effects/Noise.js b/dist/effects/Noise.js
+index 7871e2e180d8333dbad5267e94e6c86c6259c732..432c8eb3ad9b310cc8d3ea32491979a8ae0e71e5 100644
+--- a/dist/effects/Noise.js
++++ b/dist/effects/Noise.js
+@@ -1,6 +1,6 @@
+ import { BlendFunction, NoiseEffect } from "postprocessing";
+ import { wrapEffect } from "../util.js";
+-const Noise = wrapEffect(NoiseEffect, { blendFunction: BlendFunction.COLOR_DODGE });
++const Noise = wrapEffect(NoiseEffect, { blendFunction: BlendFunction.COLOR_DODGE, args: [] });
+ export {
+   Noise
+ };
