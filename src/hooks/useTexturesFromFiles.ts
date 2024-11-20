@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Texture, TextureLoader } from "three";
+import { Texture, TextureLoader, NearestFilter, RepeatWrapping } from "three";
 
 export const useTexturesFromFiles = (files: File[]): Texture[] => {
   const [textures, setTextures] = useState<Texture[]>([]);
@@ -10,6 +10,12 @@ export const useTexturesFromFiles = (files: File[]): Texture[] => {
         const reader = new FileReader();
         reader.onload = () => {
           const texture = new TextureLoader().load(reader.result as string);
+          texture.minFilter = NearestFilter;
+          texture.magFilter = NearestFilter;
+          texture.wrapS = RepeatWrapping;
+          texture.wrapT = RepeatWrapping;
+          texture.repeat.set(1, 1);
+          texture.needsUpdate = true;
           resolve(texture);
         };
         reader.readAsDataURL(file);

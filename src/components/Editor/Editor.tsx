@@ -38,7 +38,7 @@ export const Editor = () => {
     <div className="flex flex-row items-stretch h-full w-full font-mono p-4">
       <div className="flex flex-row flex-grow items-center justify-center">
         <Canvas
-          className="max-w-2xl flex aspect-square border border-neutral-800 w-full bg-neutral-900 rounded-4xl"
+          className="max-w-2xl max-h-fit h-full aspect-square border border-neutral-800 w-full bg-neutral-900 rounded-4xl"
           textures={textures}
         />
       </div>
