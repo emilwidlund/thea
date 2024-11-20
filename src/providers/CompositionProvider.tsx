@@ -1,9 +1,16 @@
 import { Composition } from "@/models/composition";
-import { createContext, useContext, useState } from "react";
+import {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 export type CompositionContextValue = {
   composition: Composition;
-  setComposition: (composition: Composition) => void;
+  setComposition: Dispatch<SetStateAction<Composition>>;
 };
 
 export const defaultCompositionContextValue = () => {
@@ -25,6 +32,10 @@ export const CompositionProvider = ({
   value: Composition;
 }) => {
   const [composition, setComposition] = useState<Composition>(value);
+
+  useEffect(() => {
+    setComposition(value);
+  }, [value]);
 
   return (
     <CompositionContextProvider.Provider

@@ -4,7 +4,7 @@ import { Texture } from "three";
 
 // Base Model for Layers
 
-export const LayerTypeModel = z.enum(["IMAGE_SEQUENCE", "ADJUSTMENT"]);
+export const LayerTypeModel = z.enum(["TEXT", "IMAGE_SEQUENCE", "ADJUSTMENT"]);
 
 export type LayerType = z.infer<typeof LayerTypeModel>;
 
@@ -21,20 +21,28 @@ export const BaseLayerModel = z.object({
 
 // Layer Models
 
+export const TextLayerModel = BaseLayerModel.extend({
+  type: z.literal("TEXT"),
+  text: z.string().default("Hello World"),
+});
+
+export type TextLayer = z.infer<typeof TextLayerModel>;
+
 export const ImageSequenceLayerModel = BaseLayerModel.extend({
-  type: LayerTypeModel.default("IMAGE_SEQUENCE"),
+  type: z.literal("IMAGE_SEQUENCE"),
   textures: z.array(z.instanceof(Texture)),
 });
 
 export type ImageSequenceLayer = z.infer<typeof ImageSequenceLayerModel>;
 
 export const AdjustmentLayerModel = BaseLayerModel.extend({
-  type: LayerTypeModel.default("ADJUSTMENT"),
+  type: z.literal("ADJUSTMENT"),
 });
 
 export type AdjustmentLayer = z.infer<typeof AdjustmentLayerModel>;
 
-export const LayerModel = z.union([
+export const LayerModel = z.discriminatedUnion("type", [
+  TextLayerModel,
   ImageSequenceLayerModel,
   AdjustmentLayerModel,
 ]);

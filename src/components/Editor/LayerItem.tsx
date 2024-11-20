@@ -23,7 +23,7 @@ export const LayerItem = ({
   const { attributes, listeners, setNodeRef, transform, active } = useDraggable(
     {
       id: layer.id,
-    },
+    }
   );
 
   const style = {
@@ -36,7 +36,7 @@ export const LayerItem = ({
       "bg-black bg-neutral-900": selected,
       "hover:bg-neutral-900": !selected,
       "shadow-xl": selected,
-    },
+    }
   );
 
   const titleClassNames = twMerge("font-medium line-clamp-1", {
@@ -73,6 +73,8 @@ const getLayerTypeLabel = (type: LayerType) => {
       return "Image Sequence";
     case "ADJUSTMENT":
       return "Adjustment";
+    case "TEXT":
+      return "Text";
     default:
       return "Unknown";
   }

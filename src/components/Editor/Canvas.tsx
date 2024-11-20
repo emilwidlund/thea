@@ -10,23 +10,27 @@ import { OrthographicCamera, Text } from "@react-three/drei";
 import { EffectComposer, Noise } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
 import { Scene } from "./Scene";
-import { Composition } from "@/models/composition";
-import { ImageSequenceLayer } from "@/models/layer";
+import { ImageSequenceLayer, TextLayer } from "@/models/layer";
 import { Flex, Box } from "@react-three/flex";
+import { useComposition } from "@/providers/CompositionProvider";
 
-type CanvasProps = Omit<THREECanvasProps, "children"> & {
-  composition: Composition;
-};
+type CanvasProps = Omit<THREECanvasProps, "children">;
 
-export const Canvas = ({ composition, ...props }: CanvasProps) => {
+export const Canvas = (props: CanvasProps) => {
   const ref = useRef<HTMLCanvasElement | null>(null);
   const polarMeshRef = useRef<Mesh>(null);
 
   const polarTexture = new TextureLoader().load("/polar.png");
 
+  const { composition } = useComposition();
+
   const sequenceLayer = composition.layers.find(
     (layer) => layer.type === "IMAGE_SEQUENCE"
   ) as ImageSequenceLayer | undefined;
+
+  const textLayer = composition.layers.find(
+    (layer) => layer.type === "TEXT"
+  ) as TextLayer | undefined;
 
   return (
     <THREECanvas ref={ref} {...props} linear flat>
@@ -55,7 +59,7 @@ export const Canvas = ({ composition, ...props }: CanvasProps) => {
                 textAlign="center"
                 maxWidth={1}
               >
-                Custom Fields
+                {textLayer?.text}
               </Text>
             </Box>
             <Box centerAnchor>

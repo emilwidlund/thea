@@ -5,7 +5,6 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { type Texture, type Mesh, type MeshBasicMaterial } from "three";
 import { Composition } from "@/models/composition";
 import { useComposition } from "@/providers/CompositionProvider";
-import { Box } from "@react-three/flex";
 
 export interface SceneProps {
   composition: Composition;
@@ -60,7 +59,7 @@ export const Scene = ({ textures }: SceneProps) => {
       <meshBasicMaterial
         ref={materialRef}
         color={0xffffff}
-        opacity={0.1}
+        opacity={0.2}
         transparent
       />
     </mesh>
