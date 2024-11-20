@@ -38,18 +38,17 @@ export const Editor = () => {
   return (
     <CompositionProvider value={composition}>
       <div className="flex flex-row items-stretch h-full w-full font-mono p-4">
-        <div className="flex flex-row flex-grow items-center justify-center">
-          <Canvas
-            gl={{ antialias: true }}
-            className="w-96 h-96 flex-grow-0 flex-shrink-0 flex bg-neutral-900"
-            composition={composition}
-          />
+        <div className="flex flex-col flex-grow items-center justify-center">
+          <div className="!max-w-2xl !w-full aspect-square flex-grow-0 bg-neutral-900">
+            <Canvas
+              className="bg-black"
+              gl={{ antialias: true }}
+              composition={composition}
+            />
+          </div>
         </div>
         <div className="flex flex-col p-8 bg-neutral-900 rounded-4xl">
-          <LayerPanel
-            composition={composition}
-            onFilesChange={setTextureFiles}
-          />
+          <LayerPanel onFilesChange={setTextureFiles} />
         </div>
       </div>
     </CompositionProvider>

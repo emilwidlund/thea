@@ -1,11 +1,9 @@
 import { Composition } from "@/models/composition";
-import { TimelineModel } from "@/models/timeline";
 import { createContext, useContext, useState } from "react";
 
 export type CompositionContextValue = {
   composition: Composition;
   setComposition: (composition: Composition) => void;
-  setFPS: (fps: number) => void;
 };
 
 export const defaultCompositionContextValue = () => {
@@ -28,16 +26,9 @@ export const CompositionProvider = ({
 }) => {
   const [composition, setComposition] = useState<Composition>(value);
 
-  const setFPS = (fps: number) => {
-    setComposition({
-      ...composition,
-      timeline: TimelineModel.parse({ fps }),
-    });
-  };
-
   return (
     <CompositionContextProvider.Provider
-      value={{ composition, setComposition, setFPS }}
+      value={{ composition, setComposition }}
     >
       {children}
     </CompositionContextProvider.Provider>

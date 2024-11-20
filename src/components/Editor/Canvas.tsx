@@ -30,23 +30,23 @@ export const Canvas = ({ composition, ...props }: CanvasProps) => {
 
   return (
     <THREECanvas ref={ref} {...props} linear flat>
-      <OrthographicCamera makeDefault zoom={100} position={[0, 0, 2]} />
+      <OrthographicCamera makeDefault zoom={100} position={[0, 0, 10]} />
       <group position={[0, 0, 1]}>
         <Suspense fallback={null}>
           <Flex
             flexDirection="column"
             alignItems="center"
-            size={[0, 10, 0]}
-            position={[0, 5, 0]}
-            padding={1}
+            size={[0, 8, 0]}
+            position={[0, 4, 0]}
+            padding={1.2}
           >
             <Box centerAnchor>
-              <mesh ref={polarMeshRef} scale={0.7}>
+              <mesh ref={polarMeshRef} scale={0.5}>
                 <planeGeometry args={[1, 1]} />
                 <meshBasicMaterial map={polarTexture} transparent />
               </mesh>
             </Box>
-            <Box centerAnchor width="auto" height="auto" flexGrow={1}>
+            <Box centerAnchor flexGrow={1}>
               <Text
                 color="white"
                 anchorX="center"
@@ -55,7 +55,7 @@ export const Canvas = ({ composition, ...props }: CanvasProps) => {
                 textAlign="center"
                 maxWidth={1}
               >
-                Introducing Discounts
+                Custom Fields
               </Text>
             </Box>
             <Box centerAnchor>
@@ -65,7 +65,7 @@ export const Canvas = ({ composition, ...props }: CanvasProps) => {
                 anchorY="middle"
                 font="/fonts/Louize-Italic-205TF.otf"
                 textAlign="center"
-                fontSize={0.5}
+                fontSize={0.4}
                 maxWidth={1}
               >
                 polar.sh

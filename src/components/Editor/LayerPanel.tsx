@@ -8,15 +8,15 @@ import { useCallback } from "react";
 import { Well } from "../Well/Well";
 import { useQueryState } from "nuqs";
 import { FilePicker } from "../FilePicker/FilePicker";
-import { Composition } from "@/models/composition";
 import { useComposition } from "@/providers/CompositionProvider";
+import { TimelineModel } from "@/models/timeline";
+import { Slider } from "../ui/slider";
 
 export interface LayerPanelProps {
-  composition: Composition;
   onFilesChange: (files: File[]) => void;
 }
 
-export const LayerPanel = ({ composition, onFilesChange }: LayerPanelProps) => {
+export const LayerPanel = ({ onFilesChange }: LayerPanelProps) => {
   const [activeLayerId, setActiveLayerId] = useQueryState("activeLayerId");
 
   const createSelectLayerHandler = useCallback(
@@ -26,7 +26,7 @@ export const LayerPanel = ({ composition, onFilesChange }: LayerPanelProps) => {
     [setActiveLayerId]
   );
 
-  const { setFPS } = useComposition();
+  const { composition, setComposition } = useComposition();
 
   return (
     <div className="flex flex-col gap-y-6 w-96">
@@ -49,11 +49,53 @@ export const LayerPanel = ({ composition, onFilesChange }: LayerPanelProps) => {
           ))}
         </Well>
       </DndContext>
-      <input
-        type="number"
-        value={composition.timeline.fps}
-        onChange={(e) => setFPS(parseInt(e.target.value))}
-      />
+      <div className="flex flex-col gap-y-4">
+        <div className="flex flex-row justify-between items-center">
+          <h3 className="text-sm">Framerate</h3>
+          <span className="text-xs text-neutral-500">
+            {composition.timeline.fps} FPS
+          </span>
+        </div>
+        <div className="flex flex-col gap-y-3">
+          <Slider
+            value={[composition.timeline.fps]}
+            max={24}
+            min={0}
+            onValueChange={(value) =>
+              setComposition({
+                ...composition,
+                timeline: TimelineModel.parse({
+                  ...composition.timeline,
+                  fps: value[0],
+                }),
+              })
+            }
+          />
+          <div className="flex flex-row justify-between text-xs px-2">
+            {Array.from({ length: 25 }).map((_, i) => (
+              <div key={i} className="flex flex-row items-center gap-x-1">
+                {i % 2 === 0 ? (
+                  <div
+                    className={`w-[1px] h-2 ${
+                      i <= composition.timeline.fps
+                        ? "bg-white"
+                        : "bg-neutral-600"
+                    }`}
+                  />
+                ) : (
+                  <div
+                    className={`w-1 h-1 rounded-full ${
+                      i <= composition.timeline.fps
+                        ? "bg-white"
+                        : "bg-neutral-600"
+                    }`}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

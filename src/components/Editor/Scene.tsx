@@ -34,21 +34,20 @@ export const Scene = ({ textures }: SceneProps) => {
       materialRef.current.needsUpdate = true;
       textureIndex++;
       elapsedTime = 0; // reset elapsed time
-
-      // Adjust the mesh scale to maintain the texture's aspect ratio
+      // Adjust the mesh scale to always cover the mesh
       const textureAspect =
         currentTexture.image.width / currentTexture.image.height;
       const canvasAspect = size.width / size.height;
       if (canvasAspect > textureAspect) {
         meshRef.current.scale.set(
-          viewport.height * textureAspect,
-          viewport.height,
+          viewport.width,
+          viewport.width / textureAspect,
           1
         );
       } else {
         meshRef.current.scale.set(
-          viewport.width,
-          viewport.width / textureAspect,
+          viewport.height * textureAspect,
+          viewport.height,
           1
         );
       }
@@ -61,7 +60,7 @@ export const Scene = ({ textures }: SceneProps) => {
       <meshBasicMaterial
         ref={materialRef}
         color={0xffffff}
-        opacity={0.5}
+        opacity={0.1}
         transparent
       />
     </mesh>
