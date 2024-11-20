@@ -1,16 +1,16 @@
 "use client";
 
-import { useRef } from "react";
+import { Suspense, useRef } from "react";
 import {
   Canvas as THREECanvas,
   CanvasProps as THREECanvasProps,
   useFrame,
   useThree,
 } from "@react-three/fiber";
-import type { Texture, Mesh, MeshBasicMaterial } from "three";
-import { OrthographicCamera } from "@react-three/drei";
+import { type Texture, type Mesh, type MeshBasicMaterial, TextureLoader } from "three";
+import { OrthographicCamera, Text } from "@react-three/drei";
 import { EffectComposer, Noise } from "@react-three/postprocessing";
-
+import { BlendFunction } from "postprocessing";
 
 type CanvasProps = Omit<THREECanvasProps, "children"> & {
   textures: Texture[];
@@ -18,13 +18,48 @@ type CanvasProps = Omit<THREECanvasProps, "children"> & {
 
 export const Canvas = ({ textures, ...props }: CanvasProps) => {
   const ref = useRef<HTMLCanvasElement | null>(null);
+  const polarMeshRef = useRef<Mesh>(null);
+
+  const polarTexture = new TextureLoader().load('/polar.png');
+
+
 
   return (
     <THREECanvas ref={ref} {...props} linear flat>
       <OrthographicCamera makeDefault zoom={100} position={[0, 0, 10]} />
+      <mesh ref={polarMeshRef} position={[0, 2.5, 1]} scale={.5}>
+        <planeGeometry args={[1, 1]} />
+        <meshBasicMaterial map={polarTexture} transparent />
+      </mesh>
+      <Suspense fallback={null}>
+        <Text
+          position={[0, 0, 1]}
+          color="white"
+          anchorX="center"
+          anchorY="middle"
+          font="/fonts/Louize-Italic-205TF.otf"
+          textAlign="center"
+          maxWidth={1}
+        >
+          Introducing Discounts
+        </Text>
+        <Text
+          position={[0, -2.5, 1]}
+          color="white"
+          anchorX="center"
+          anchorY="middle"
+          font="/fonts/Louize-Italic-205TF.otf"
+          textAlign="center"
+          fontSize={0.3}
+          maxWidth={1}
+        >
+          polar.sh
+        </Text>
+      </Suspense>
       {textures.length > 0 && <Scene textures={textures} />}
+      
       <EffectComposer>
-        <Noise />
+        <Noise premultiply blendFunction={BlendFunction.ADD} />
       </EffectComposer>
     </THREECanvas>
   );
@@ -70,7 +105,7 @@ const Scene = ({ textures }: SceneProps) => {
     <>
       <mesh ref={meshRef}>
         <planeGeometry args={[1, 1]} />
-        <meshBasicMaterial ref={materialRef} color={0xffffff} />
+        <meshBasicMaterial ref={materialRef} color={0xffffff} opacity={0.5} transparent />
       </mesh>
     </>
   );
