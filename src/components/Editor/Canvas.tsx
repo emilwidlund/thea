@@ -7,12 +7,13 @@ import {
 } from "@react-three/fiber";
 import { type Mesh, TextureLoader } from "three";
 import { OrthographicCamera, Text } from "@react-three/drei";
-import { EffectComposer, Noise } from "@react-three/postprocessing";
+import { EffectComposer } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
 import { Scene } from "./Scene";
 import { ImageSequenceLayer, TextLayer } from "@/models/layer";
 import { Flex, Box } from "@react-three/flex";
 import { useComposition } from "@/providers/CompositionProvider";
+import { Noise } from "@/effects/NoiseEffect";
 
 type CanvasProps = Omit<THREECanvasProps, "children">;
 
@@ -84,7 +85,12 @@ export const Canvas = (props: CanvasProps) => {
       )}
 
       <EffectComposer>
-        <Noise premultiply blendFunction={BlendFunction.ADD} />
+        <Noise
+          premultiply
+          blendFunction={BlendFunction.ADD}
+          noiseIntensity={5}
+          noiseSize={10}
+        />
       </EffectComposer>
     </THREECanvas>
   );
